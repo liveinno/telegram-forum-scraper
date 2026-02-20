@@ -1,0 +1,56 @@
+# Secrets and State
+state.json
+state.json.*
+!state.json.example
+*.session
+*.session-journal
+.env
+.env.local
+
+# Data and Media
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+media/
+downloads/
+@*/
+-100*/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
