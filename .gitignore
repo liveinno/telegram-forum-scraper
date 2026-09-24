@@ -54,3 +54,5 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+*.db.bak
+logs_scrape_*.log

@@ -94,3 +94,5 @@ def unify_punct(text: str) -> str:
 
 def remove_diacritics(text: str) -> str:
     # NFKD + filter combining marks
+    normalized = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in normalized if not unicodedata.combining(ch))

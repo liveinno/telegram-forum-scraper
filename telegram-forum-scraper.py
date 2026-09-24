@@ -4,8 +4,8 @@ import json
 import csv
 import asyncio
 from telethon import TelegramClient
-from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument, User, PeerChannel, Channel, Chat, InputPeerChannel
-from telethon.tl.functions.channels import GetForumTopicsRequest
+from telethon.tl.types import MessageMediaPhoto, MessageMediaDocument, User, PeerChannel, Channel, Chat, InputPeerChannel, MessageEntityTextUrl, MessageEntityUrl
+from telethon.tl.functions.messages import GetForumTopicsRequest
 from telethon.errors import FloodWaitError, RPCError
 import aiohttp
 import sys
@@ -505,6 +505,30 @@ async def rate_limited_request():
     
     last_request_time = time.time()
 
+def message_text_with_links(message):
+    """Текст сообщения с вшитыми URL из entities.
+
+    Telethon отдаёт в message.message голый текст: ссылки, спрятанные
+    за словом («по ссылке»), живут в message.entities как
+    MessageEntityTextUrl и в текст не попадают. Вшиваем их обратно
+    в позицию entity: «по ссылке» -> «по ссылке (URL)». Голые
+    MessageEntityUrl уже есть в тексте — пропускаем.
+    """
+    text = message.message or ""
+    entities = getattr(message, "entities", None) or []
+    inserts = []  # (offset_end, url)
+    for e in entities:
+        url = getattr(e, "url", None)
+        if isinstance(e, MessageEntityTextUrl) and url:
+            inserts.append((e.offset + e.length, url))
+    if not inserts:
+        return text
+    # вставляем с конца, чтобы не сбить offset'ы
+    for pos, url in sorted(inserts, reverse=True):
+        text = text[:pos] + f" ({url})" + text[pos:]
+    return text
+
+
 def save_message_to_db(channel, message, sender, topic_id=None, topic_title=None):
     if 'args' in globals() and args and args.dry_run:
         return
@@ -561,7 +585,7 @@ def save_message_to_db(channel, message, sender, topic_id=None, topic_title=None
                getattr(sender, 'first_name', None) if isinstance(sender, User) else None,
                getattr(sender, 'last_name', None) if isinstance(sender, User) else None,
                getattr(sender, 'username', None) if isinstance(sender, User) else None,
-               message.message,
+               message_text_with_links(message),
                message.media.__class__.__name__ if message.media else None,
                None,
                message.reply_to_msg_id if message.reply_to else None,
@@ -842,7 +866,7 @@ async def get_forum_topics(entity):
             while True:
                 await rate_limited_request()
                 result = await client(GetForumTopicsRequest(
-                    channel=input_channel,
+                    peer=input_channel,
                     offset_date=offset_date,
                     offset_id=offset_id,
                     offset_topic=offset_topic,
