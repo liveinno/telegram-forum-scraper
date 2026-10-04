@@ -45,6 +45,8 @@ def display_ascii_art():
     
     print(WHITE + art + RESET)
 
+__version__ = "1.1.0"
+
 # Получаем директорию, где находится скрипт
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(SCRIPT_DIR, 'state.json')
@@ -58,6 +60,7 @@ media_download_tasks = []  # Список активных задач загру
 
 # CLI arguments
 parser = argparse.ArgumentParser(description="Telegram scraper non-interactive runner")
+parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
 parser.add_argument('--scrape', action='store_true', help='Run one-shot scraping for provided channels or saved state channels')
 parser.add_argument('--channels', type=str, help='Comma-separated list of channels to scrape, e.g. @ens1enp1,@hikvision_chat,-100123')
 parser.add_argument('--channels-file', type=str, help='Path to a file with channels, one per line')
