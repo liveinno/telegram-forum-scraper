@@ -17,7 +17,7 @@
 
 ### Changed
 - `start.sh`: `umask 077` и проброс аргументов `"$@"` в скрипт
-- `.gitignore`: `*.db.bak`, `logs_scrape_*.log`
+- `.gitignore`: `*.db.bak`, `logs_scrape_*.log`, `*.log`, `.env*`, WAL/SHM-сайдкары, `*.bak`, патч-остатки, `channels.txt`; экспорты `<канал>/<канал>.csv|json` и `channels.txt` защищены от случайного коммита
 
 ## [1.0.0] - 2026-09-24
 

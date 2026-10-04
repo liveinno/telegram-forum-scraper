@@ -4,8 +4,24 @@ state.json.*
 !state.json.example
 *.session
 *.session-journal
-.env
-.env.local
+*.session-wal
+*.session-shm
+.env*
+
+# Scraped data & exports (user content — never commit)
+*/*.csv
+*/*.json
+channels.txt
+*.log
+*.db-wal
+*.db-shm
+
+# Backups and patch leftovers
+*.bak
+*.orig
+*.rej
+*.patch
+*.eml
 
 # Data and Media
 *.db
@@ -56,3 +72,7 @@ wheels/
 Thumbs.db
 *.db.bak
 logs_scrape_*.log
+
+# Note: channel output dirs are named after the sanitized channel
+# (@ stripped), e.g. 'channelname/' — covered via the export/DB/media
+# patterns above plus *.db / media/ / downloads/.
